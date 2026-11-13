@@ -31,7 +31,7 @@
     color: #fff; background: #1d5fd1; border: 3px solid #fff; border-radius: 999px; cursor: pointer;
   }
   #stage.play #start { display: none; }
-  #msg { position: absolute; bottom: 6%; left: 0; right: 0; text-align: center; color: #fff; font-size: 1.1rem; opacity: 0; padding: 0 16px; }
+  #msg { position: absolute; bottom: 10%; left: 0; right: 0; text-align: center; color: #fff; font-size: 1.1rem; opacity: 0; padding: 0 16px; }
   #stage.play #msg { animation: fadein 2s ease 8s forwards; }
   @keyframes fadein { to { opacity: 1; } }
 </style>
@@ -41,7 +41,7 @@
   <img id="pic" src="finale.png" alt="That's all folks!">
   <button id="start">Tap to reveal</button>
   <button id="sound" style="display:none;position:absolute;z-index:3;top:16px;right:16px;padding:10px 16px;font-size:1rem;font-weight:700;color:#fff;background:#d6392f;border:2px solid #fff;border-radius:999px;">🔊 Tap for sound</button>
-  <button id="replay" style="display:none;position:absolute;z-index:3;bottom:16%;padding:16px 30px;font-size:1.2rem;font-weight:700;color:#fff;background:#1d5fd1;border:3px solid #fff;border-radius:999px;">↻ Replay</button>
+  <button id="replay" style="display:none;position:absolute;z-index:3;bottom:max(2%, env(safe-area-inset-bottom));padding:8px 18px;font-size:.9rem;font-weight:700;color:#fff;background:#1d5fd1;border:2px solid #fff;border-radius:999px;">↻ Replay</button>
   <div id="msg">You collected them all!</div>
 </div>
 <audio id="snd" src="audio.mp3" preload="auto"></audio>
