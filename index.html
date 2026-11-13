@@ -40,6 +40,7 @@
 <div id="stage">
   <img id="pic" src="finale.png" alt="That's all folks!">
   <button id="start">Tap to reveal</button>
+  <button id="sound" style="display:none;position:absolute;z-index:3;top:16px;right:16px;padding:10px 16px;font-size:1rem;font-weight:700;color:#fff;background:#d6392f;border:2px solid #fff;border-radius:999px;">🔊 Tap for sound</button>
   <div id="msg">You collected them all!</div>
 </div>
 <audio id="snd" src="audio.mp3" preload="auto"></audio>
@@ -48,8 +49,17 @@
   document.getElementById("start").addEventListener("click", () => {
     stage.classList.add("play");
     const a = document.getElementById("snd");
-    a.play().catch(() => {});
+    a.currentTime = 0;
+    a.play().catch(() => showSound());
   });
+  const sb = document.getElementById("sound");
+  function showSound() { sb.style.display = "block"; }
+  sb.addEventListener("click", () => {
+    const a = document.getElementById("snd");
+    a.currentTime = 0;
+    a.play().then(() => { sb.style.display = "none"; }).catch(() => { sb.textContent = "Sound unavailable"; });
+  });
+  document.getElementById("snd").addEventListener("error", showSound);
 </script>
 </body>
 </html>
