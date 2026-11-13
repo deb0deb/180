@@ -59,14 +59,14 @@
     a.currentTime = 0;
     a.play().catch(() => showSound());
     clearTimeout(endTimer);
-    endTimer = setTimeout(showReplay, 32000); // fallback if audio never ends
+    endTimer = setTimeout(showReplay, 29000); // fallback if audio never ends
   }
   function showReplay() { clearTimeout(endTimer); sb.style.display = "none"; rb.style.display = "block"; }
   document.getElementById("start").addEventListener("click", run);
   rb.addEventListener("click", run);
   document.getElementById("snd").addEventListener("ended", () => {
     // wait for the visuals (3s iris + 28s drift = 31s) to finish too
-    const wait = Math.max(0, 31000 - performance.now() + t0);
+    const wait = 0;
     setTimeout(showReplay, wait);
   });
   const sb = document.getElementById("sound");
