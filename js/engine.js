@@ -5,14 +5,16 @@
   "use strict";
   const $ = (id) => document.getElementById(id);
   const stage = $("stage"), scene = $("scene"), mosaic = $("mosaic"), finale = $("finale");
-  const snd = $("snd"), startBtn = $("start"), soundBtn = $("sound"), replayBtn = $("replay");
+  const opening = $("opening"), snd = $("snd"), startBtn = $("start"), soundBtn = $("sound"), replayBtn = $("replay");
 
   const CELLS = 12;          // 3 x 4
-  const HOLD = 0.28;         // seconds a full mosaic stays up before clearing
+  const HOLD = 0.20;         // seconds a full mosaic stays up before clearing
+  const LEAD = 0.04;         // reveal this many seconds ahead of the beat (feels snappier)
+  const OPEN_MS = 2400;      // opening message time before music + iris
   const THUMBS = "assets/duck-thumbnails/";
   const SEED = 180;          // fixed: reveal POSITIONS repeat every play, ducks do not
 
-  let manifest = [], cfg = null, deck = [], deckPos = 0, st = null, raf = 0;
+  let manifest = [], cfg = null, deck = [], deckPos = 0, st = null, raf = 0, openTimer = 0;
 
   // ---- helpers ----
   function mulberry32(a) {
@@ -79,7 +81,7 @@
   function tick() {
     const t = snd.currentTime;
     const ev = cfg.events;
-    while (st.i < ev.length && ev[st.i].time <= t) {
+    while (st.i < ev.length && ev[st.i].time <= t + LEAD) {
       const e = ev[st.i++];
       if (st.finaleDone) continue;
       if (e.action === "reveal") {
@@ -102,6 +104,8 @@
 
   function resetVisuals() {
     cancelAnimationFrame(raf);
+    clearTimeout(openTimer);
+    opening.className = "";
     mosaic.className = "mosaic";
     if (st && st.clone) st.clone.remove();
     finale.className = ""; scene.className = "";
@@ -115,7 +119,20 @@
   function run() {
     resetVisuals();
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
+    // Opening message on black, silent. Unlock audio inside this tap so the
+    // delayed play() below is allowed by mobile browsers.
+    snd.muted = true;
+    snd.play().then(() => { snd.pause(); snd.currentTime = 0; snd.muted = false; })
+              .catch(() => { snd.muted = false; });
+    opening.classList.add("show");
+    clearTimeout(openTimer);
+    openTimer = setTimeout(startMusic, OPEN_MS);
+  }
+
+  function startMusic() {
+    scene.classList.add("open");      // iris opens, ducks start with the music
     snd.currentTime = 0;
+    snd.muted = false;
     snd.play().then(() => { raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.hidden = false; });
   }
