@@ -41,16 +41,33 @@
   <img id="pic" src="finale.png" alt="That's all folks!">
   <button id="start">Tap to reveal</button>
   <button id="sound" style="display:none;position:absolute;z-index:3;top:16px;right:16px;padding:10px 16px;font-size:1rem;font-weight:700;color:#fff;background:#d6392f;border:2px solid #fff;border-radius:999px;">🔊 Tap for sound</button>
+  <button id="replay" style="display:none;position:absolute;z-index:3;bottom:16%;padding:16px 30px;font-size:1.2rem;font-weight:700;color:#fff;background:#1d5fd1;border:3px solid #fff;border-radius:999px;">↻ Replay</button>
   <div id="msg">You collected them all!</div>
 </div>
 <audio id="snd" src="audio.mp3" preload="auto"></audio>
 <script>
   const stage = document.getElementById("stage");
-  document.getElementById("start").addEventListener("click", () => {
+  const rb = document.getElementById("replay");
+  let endTimer, t0 = 0;
+  function run() {
+    t0 = performance.now();
+    rb.style.display = "none";
+    stage.classList.remove("play");
+    void stage.offsetWidth; // restart CSS animations
     stage.classList.add("play");
     const a = document.getElementById("snd");
     a.currentTime = 0;
     a.play().catch(() => showSound());
+    clearTimeout(endTimer);
+    endTimer = setTimeout(showReplay, 32000); // fallback if audio never ends
+  }
+  function showReplay() { clearTimeout(endTimer); sb.style.display = "none"; rb.style.display = "block"; }
+  document.getElementById("start").addEventListener("click", run);
+  rb.addEventListener("click", run);
+  document.getElementById("snd").addEventListener("ended", () => {
+    // wait for the visuals (3s iris + 28s drift = 31s) to finish too
+    const wait = Math.max(0, 31000 - performance.now() + t0);
+    setTimeout(showReplay, wait);
   });
   const sb = document.getElementById("sound");
   function showSound() { sb.style.display = "block"; }
