@@ -1,0 +1,47 @@
+:root { --grid-ratio: 720 / 1140; } /* 3 cols x 4 rows of 240x285 tiles */
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
+  font-family: system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+#stage { position: fixed; inset: 0; background: #000; }
+#scene { position: absolute; inset: 0; clip-path: circle(150% at 50% 50%); }
+#scene.iris { animation: iris 0.8s ease-in forwards; }
+@keyframes iris { to { clip-path: circle(0% at 50% 50%); } }
+
+/* finale layer sits under the mosaic */
+#finale { position: absolute; inset: 0; background: #011a6c; display: flex;
+  align-items: center; justify-content: center; opacity: 0; }
+#finale img { max-width: 100%; max-height: 100%; object-fit: contain; }
+#finale.show { animation: finale-in 1.4s ease-out forwards; }
+#finale.pop img { animation: pop 0.35s ease-out; }
+@keyframes finale-in { from { opacity: 0; transform: scale(1.18); } to { opacity: 1; transform: scale(1); } }
+@keyframes pop { 50% { transform: scale(1.04); } }
+
+/* 3x4 mosaic, centered, whole art visible */
+.mosaic { position: absolute; inset: 0; margin: auto;
+  width: min(100vw, calc(100dvh * var(--grid-ratio)));
+  aspect-ratio: 720 / 1140;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr);
+  gap: 2px; background: #000; }
+.mosaic .cell { background: #000; overflow: hidden; opacity: 0; transform: scale(0.82);
+  transition: opacity 0.16s ease-out, transform 0.16s ease-out; }
+.mosaic .cell.on { opacity: 1; transform: scale(1); }
+.mosaic .cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* finale split: clones of the mosaic, left and right halves slide away */
+.mosaic.half-l { clip-path: inset(0 50% 0 0); transition: transform 0.9s cubic-bezier(.55,0,.8,.3); }
+.mosaic.half-r { clip-path: inset(0 0 0 50%); transition: transform 0.9s cubic-bezier(.55,0,.8,.3); }
+.mosaic.half-l.go { transform: translateX(-105vw); }
+.mosaic.half-r.go { transform: translateX(105vw); }
+
+.btn { position: absolute; z-index: 5; color: #fff; background: #1d5fd1; border: 2px solid #fff;
+  border-radius: 999px; font-weight: 700; cursor: pointer; }
+.btn.big { top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 18px 34px; font-size: 1.3rem; }
+.btn.small { padding: 8px 18px; font-size: 0.9rem; }
+.btn.red { background: #d6392f; top: 16px; right: 16px; }
+#replay { bottom: max(3%, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); }
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mosaic .cell { transition: none; transform: none; }
+  #finale.show, #finale.pop img { animation: none; opacity: 1; }
+  .mosaic.half-l, .mosaic.half-r { transition: none; }
+}

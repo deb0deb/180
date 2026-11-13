@@ -3,80 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow">
 <title>The Final Card</title>
-<style>
-  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: system-ui, sans-serif; }
-  #stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #000; }
-  #pic {
-    max-width: 100%; max-height: 100%; object-fit: contain;
-    clip-path: circle(0% at 50% 45%);
-    transform: scale(1);
-  }
-  #stage.play #pic {
-    animation:
-      iris 3s ease-out forwards,
-      drift 28s ease-in-out 3s forwards;
-  }
-  @keyframes iris { to { clip-path: circle(150% at 50% 45%); } }
-  @keyframes drift {
-    0%   { transform: scale(1) rotate(0deg); }
-    25%  { transform: scale(1.03) rotate(-0.6deg); }
-    50%  { transform: scale(1.05) rotate(0.6deg); }
-    75%  { transform: scale(1.03) rotate(-0.4deg); }
-    100% { transform: scale(1.06) rotate(0deg); }
-  }
-  #start {
-    position: absolute; z-index: 2; padding: 18px 34px; font-size: 1.3rem; font-weight: 700;
-    color: #fff; background: #1d5fd1; border: 3px solid #fff; border-radius: 999px; cursor: pointer;
-  }
-  #stage.play #start { display: none; }
-  #msg { position: absolute; bottom: 10%; left: 0; right: 0; text-align: center; color: #fff; font-size: 1.1rem; opacity: 0; padding: 0 16px; }
-  #stage.play #msg { animation: fadein 2s ease 8s forwards; }
-  @keyframes fadein { to { opacity: 1; } }
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="stage">
-  <img id="pic" src="finale.png" alt="That's all folks!">
-  <button id="start">Tap to reveal</button>
-  <button id="sound" style="display:none;position:absolute;z-index:3;top:16px;right:16px;padding:10px 16px;font-size:1rem;font-weight:700;color:#fff;background:#d6392f;border:2px solid #fff;border-radius:999px;">🔊 Tap for sound</button>
-  <button id="replay" style="display:none;position:absolute;z-index:3;bottom:max(2%, env(safe-area-inset-bottom));padding:8px 18px;font-size:.9rem;font-weight:700;color:#fff;background:#1d5fd1;border:2px solid #fff;border-radius:999px;">↻ Replay</button>
-  <div id="msg">You collected them all!</div>
+  <div id="scene">
+    <div id="finale"><img src="finale.png" alt="That's all folks!"></div>
+    <div id="mosaic" class="mosaic"></div>
+  </div>
+  <button id="start" class="btn big">Tap to play</button>
+  <button id="sound" class="btn small red" hidden>🔊 Tap for sound</button>
+  <button id="replay" class="btn small" hidden>↻ Replay</button>
 </div>
 <audio id="snd" src="audio.mp3" preload="auto"></audio>
-<script>
-  const stage = document.getElementById("stage");
-  const rb = document.getElementById("replay");
-  let endTimer, t0 = 0;
-  function run() {
-    t0 = performance.now();
-    rb.style.display = "none";
-    stage.classList.remove("play");
-    void stage.offsetWidth; // restart CSS animations
-    stage.classList.add("play");
-    const a = document.getElementById("snd");
-    a.currentTime = 0;
-    a.play().catch(() => showSound());
-    clearTimeout(endTimer);
-    endTimer = setTimeout(showReplay, 29000); // fallback if audio never ends
-  }
-  function showReplay() { clearTimeout(endTimer); sb.style.display = "none"; rb.style.display = "block"; }
-  document.getElementById("start").addEventListener("click", run);
-  rb.addEventListener("click", run);
-  document.getElementById("snd").addEventListener("ended", () => {
-    // wait for the visuals (3s iris + 28s drift = 31s) to finish too
-    const wait = 0;
-    setTimeout(showReplay, wait);
-  });
-  const sb = document.getElementById("sound");
-  function showSound() { sb.style.display = "block"; }
-  sb.addEventListener("click", () => {
-    const a = document.getElementById("snd");
-    a.currentTime = 0;
-    a.play().then(() => { sb.style.display = "none"; }).catch(() => { sb.textContent = "Sound unavailable"; });
-  });
-  document.getElementById("snd").addEventListener("error", showSound);
-</script>
+<script src="js/engine.js"></script>
 </body>
 </html>

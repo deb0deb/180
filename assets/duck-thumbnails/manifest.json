@@ -1,0 +1,416 @@
+[
+ {
+  "file": "D001_who-dat.webp",
+  "id": "D001",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D002_crown-royal.webp",
+  "id": "D002",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D003_morning-call.webp",
+  "id": "D003",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D004_solid-chocolate.webp",
+  "id": "D004",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D005_sno-cap.webp",
+  "id": "D005",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D006_chocolate-covered.webp",
+  "id": "D006",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D007_lemon-doberge.webp",
+  "id": "D007",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D008_chocolate-doberge.webp",
+  "id": "D008",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D009_pirate.webp",
+  "id": "D009",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D010_king-cake.webp",
+  "id": "D010",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D011_radio-active.webp",
+  "id": "D011",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D012_thanksgiving.webp",
+  "id": "D012",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D013_pink-glitter-slime.webp",
+  "id": "D013",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D014_green-slime.webp",
+  "id": "D014",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D015_cookie-dough.webp",
+  "id": "D015",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D016_honecomb.webp",
+  "id": "D016",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D017_swamp-ghost.webp",
+  "id": "D017",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D018_sheet-ghost.webp",
+  "id": "D018",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D019_camo.webp",
+  "id": "D019",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D020_buds-broiler.webp",
+  "id": "D020",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D021_streetcar-named.webp",
+  "id": "D021",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D022_artist.webp",
+  "id": "D022",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D023_tiffany.webp",
+  "id": "D023",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D024_troll.webp",
+  "id": "D024",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D025_root-beer.webp",
+  "id": "D025",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D026_mr-potato.webp",
+  "id": "D026",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D027_donald1.webp",
+  "id": "D027",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D028_diamond.webp",
+  "id": "D028",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D029_lucky.webp",
+  "id": "D029",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D030_gingerbread.webp",
+  "id": "D030",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D031_santa-wood.webp",
+  "id": "D031",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D032_pine.webp",
+  "id": "D032",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D033_walnut.webp",
+  "id": "D033",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D034_rosewood.webp",
+  "id": "D034",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D035_birthday-cake.webp",
+  "id": "D035",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D036_template.webp",
+  "id": "D036",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D037_jeeped.webp",
+  "id": "D037",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D038_snoball.webp",
+  "id": "D038",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D039_chopsley.webp",
+  "id": "D039",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D040_duckus-major.webp",
+  "id": "D040",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D041_bubble.webp",
+  "id": "D041",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D042_magnificent.webp",
+  "id": "D042",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D043_LSU-grad.webp",
+  "id": "D043",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D044_MIT-grad.webp",
+  "id": "D044",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D045_brick.webp",
+  "id": "D045",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D046_roughneck.webp",
+  "id": "D046",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D047_offshore.webp",
+  "id": "D047",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D048_portofiona.webp",
+  "id": "D048",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D049_portalfredo.webp",
+  "id": "D049",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D050_sheriff.webp",
+  "id": "D050",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D051_cowboy.webp",
+  "id": "D051",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D052_rc.webp",
+  "id": "D052",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D053_aviator.webp",
+  "id": "D053",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D054_valentine.webp",
+  "id": "D054",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D055_art-maker.webp",
+  "id": "D055",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D056_snorkel.webp",
+  "id": "D056",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D057_patriotic.webp",
+  "id": "D057",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D058_roman-warrior.webp",
+  "id": "D058",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D059_roller-coaster.webp",
+  "id": "D059",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D060_krewe.webp",
+  "id": "D060",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D061_croissant.webp",
+  "id": "D061",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D062_blue-hair.webp",
+  "id": "D062",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D063_hypno.webp",
+  "id": "D063",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D064_red-tie.webp",
+  "id": "D064",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D065_camera.webp",
+  "id": "D065",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D066_light.webp",
+  "id": "D066",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D067_quilt-block.webp",
+  "id": "D067",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D068_derby.webp",
+  "id": "D068",
+  "w": 240,
+  "h": 285
+ },
+ {
+  "file": "D069_origami.webp",
+  "id": "D069",
+  "w": 240,
+  "h": 285
+ }
+]

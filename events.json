@@ -1,0 +1,301 @@
+{
+ "duration": 23.86,
+ "finale_time": 16.28,
+ "spoken_time": 21.0,
+ "iris_start": 23.05,
+ "events": [
+  {
+   "time": 0.06,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 0.6,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 1.02,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 1.44,
+   "action": "reveal",
+   "count": 3
+  },
+  {
+   "time": 1.56,
+   "action": "nextMosaic"
+  },
+  {
+   "time": 2.04,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 2.67,
+   "action": "reveal",
+   "count": 3
+  },
+  {
+   "time": 2.87,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 3.2,
+   "action": "nextMosaic"
+  },
+  {
+   "time": 3.52,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 3.95,
+   "action": "reveal",
+   "count": 4
+  },
+  {
+   "time": 4.14,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 4.37,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 4.57,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 4.98,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 5.21,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 5.33,
+   "action": "nextMosaic"
+  },
+  {
+   "time": 5.6,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 5.82,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 6.23,
+   "action": "reveal",
+   "count": 3
+  },
+  {
+   "time": 6.44,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 6.56,
+   "action": "nextMosaic"
+  },
+  {
+   "time": 6.87,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 7.49,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 7.72,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 7.89,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 8.14,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 8.35,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 8.56,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 8.79,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 8.96,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 9.16,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 9.59,
+   "action": "reveal",
+   "count": 3
+  },
+  {
+   "time": 10.01,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 10.22,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 10.65,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 11.05,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 11.26,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 11.47,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 11.89,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 12.12,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 12.32,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 12.52,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 12.92,
+   "action": "reveal",
+   "count": 3
+  },
+  {
+   "time": 13.19,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 13.31,
+   "action": "nextMosaic"
+  },
+  {
+   "time": 13.54,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 13.82,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 14.02,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 14.14,
+   "action": "nextMosaic"
+  },
+  {
+   "time": 14.38,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 14.64,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 14.83,
+   "action": "reveal",
+   "count": 2
+  },
+  {
+   "time": 15.07,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 15.23,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 15.35,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 15.5,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 15.89,
+   "action": "reveal",
+   "count": 4
+  },
+  {
+   "time": 16.09,
+   "action": "reveal",
+   "count": 1
+  },
+  {
+   "time": 16.28,
+   "action": "finale"
+  }
+ ]
+}

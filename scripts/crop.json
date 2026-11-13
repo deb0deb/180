@@ -1,0 +1,9 @@
+{
+  "source_dir": "SET-IN-crop.local.json",
+  "expected_size": [720, 1020],
+  "crop": { "left": 78, "top": 90, "right": 78, "bottom": 260 },
+  "thumb_width": 240,
+  "webp_quality": 80,
+  "exclude_ids": ["D180"],
+  "overrides": {}
+}
