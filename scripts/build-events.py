@@ -55,7 +55,7 @@ out = {
         "lettering": SPOKEN_ESTIMATE,                   # "That's all Folks!" wipes in
         "line": round(SPOKEN_ESTIMATE + 0.9, 2),        # red underline sweeps
         "wink": round(SPOKEN_ESTIMATE + 1.3, 2),        # bunny winks, duck squashes
-        "winkEnd": round(SPOKEN_ESTIMATE + 1.7, 2),
+        "winkEnd": round(SPOKEN_ESTIMATE + 2.0, 2),
     },
     "events": events,
 }

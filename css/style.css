@@ -38,8 +38,8 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 #fstage .wink { opacity: 0; }
 #finale.f-wink .wink { opacity: 1; }
 .duck { transform-origin: 71.9% 48.8%; }
-#finale.f-wink .duck { animation: squash 0.32s ease-out; }
-@keyframes squash { 40% { transform: scale(1.05, 0.88); } }
+#finale.f-wink .duck { animation: squash 0.4s ease-out; }
+@keyframes squash { 35% { transform: scale(1.09, 0.82); } }
 
 #fstage .lettering { clip-path: inset(0 100% 0 0); }
 #finale.f-text .lettering { animation: wipe 0.9s ease-out forwards; }
