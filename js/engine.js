@@ -133,7 +133,7 @@
   function tick() {
     const t = snd.currentTime;
     step(t);
-    if (dbg) dbg.update(t);
+    if (window.duck && window.duck.onTick) window.duck.onTick(t);
     if (!snd.ended) raf = requestAnimationFrame(tick);
   }
 
@@ -153,30 +153,15 @@
     snd.play().then(() => { raf = requestAnimationFrame(tick); }).catch(() => { soundBtn.hidden = false; });
   }
 
-  // ?debug adds a scrub bar, jump buttons and a twink test.
+  // ?debug loads js/debug.local.js (a local-only file, not in the repo) which adds
+  // a scrub bar. Without that file, ?debug does nothing.
   let dbg = null;
-  function buildDebug() {
-    const box = document.createElement("div");
-    box.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(0,0,0,.78);color:#fff;" +
-      "font:13px system-ui;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center";
-    const lab = document.createElement("span"); lab.textContent = "0.00";
-    const rng = document.createElement("input");
-    rng.type = "range"; rng.min = 0; rng.max = cfg.duration; rng.step = 0.05; rng.value = 0; rng.style.flex = "1 1 100%";
-    let dragging = false;
-    rng.addEventListener("pointerdown", () => { dragging = true; });
-    rng.addEventListener("pointerup", () => { dragging = false; });
-    rng.addEventListener("input", () => seek(parseFloat(rng.value)));
-    box.append(rng, lab);
-    const btn = (txt, fn) => { const b = document.createElement("button"); b.textContent = txt; b.onclick = fn;
-      b.style.cssText = "padding:4px 8px"; box.appendChild(b); };
-    btn("-2s", () => seek(Math.max(0, snd.currentTime - 2)));
-    btn("+2s", () => seek(Math.min(cfg.duration - 0.1, snd.currentTime + 2)));
-    btn("Finale", () => seek(cfg.finale_time - 0.5));
-    btn("Wink", () => seek(cfg.cues.wink - 1.5));
-    btn("Pause/Play", () => { if (snd.paused) snd.play(); else snd.pause(); });
-    btn("Test twink", () => { ensureAudio(); twink(); });
-    document.body.appendChild(box);
-    dbg = { update(t) { lab.textContent = t.toFixed(2) + "s"; if (!dragging) rng.value = t; } };
+  function initDebug() {
+    if (!/[?&]debug/.test(location.search)) return;
+    window.duck = { seek, twink, ensureAudio, cfg, snd, onTick: null };
+    const s = document.createElement("script");
+    s.src = "js/debug.local.js";
+    document.body.appendChild(s);
   }
 
   function resetVisuals() {
@@ -236,6 +221,6 @@
       .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
     startBtn.disabled = false;
-    if (/[?&]debug/.test(location.search)) buildDebug();
+    initDebug();
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });
 })();
