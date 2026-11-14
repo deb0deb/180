@@ -8,7 +8,6 @@
   const opening = $("opening"), snd = $("snd"), startBtn = $("start"), soundBtn = $("sound"), replayBtn = $("replay");
 
   const CELLS = 12;          // 3 x 4
-  const OPEN_MS = 2500;      // "YOU DID IT!" on black before the ducks
   const HOLD = 0.20;         // seconds a full mosaic stays up before clearing
   const LEAD = 0.04;         // reveal this many seconds ahead of the beat (feels snappier)
   const THUMBS = "assets/duck-thumbnails/";
@@ -150,7 +149,7 @@
     st.seeking = true;
     for (let tt = 0; tt <= target; tt += 0.03) step(tt);
     st.seeking = false;
-    silence(false);
+    snd.muted = false;
     snd.currentTime = target;
     snd.play().then(() => { raf = requestAnimationFrame(tick); }).catch(() => { soundBtn.hidden = false; });
   }
@@ -180,40 +179,18 @@
     newMosaic();
   }
 
-  // Tap -> "YOU DID IT!" on black (~2.5 s) -> iris opens, music + ducks start.
-  // The music is started inside the tap (always allowed) but kept silent through
-  // a gain node until the iris opens, then restarted from 0 - no audible blip.
-  let srcNode = null, gainNode = null;
-  function setupGraph() {
-    if (!ac || srcNode) return;
-    try {
-      srcNode = ac.createMediaElementSource(snd);
-      gainNode = ac.createGain();
-      srcNode.connect(gainNode).connect(ac.destination);
-    } catch (e) { srcNode = gainNode = null; }
-  }
-  function silence(on) {
-    if (gainNode) gainNode.gain.value = on ? 0 : 1; else snd.muted = on;
-  }
-
+  // Tap -> iris opens, music + ducks start immediately. "YOU DID IT!" waits for the end.
   function run() {
     resetVisuals();
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
-    ensureAudio(); setupGraph();
-    silence(true);
-    snd.currentTime = 0;
-    // Unlock inside the tap, then park at 0: nothing is heard (gain is 0) and the
-    // start of the track is already buffered, so the real start has no seek stutter.
-    snd.play().then(() => { snd.pause(); snd.currentTime = 0; }).catch(() => {});
-    opening.classList.add("show");
-    clearTimeout(openTimer);
-    openTimer = setTimeout(startMusic, OPEN_MS);
+    ensureAudio();
+    startMusic();
   }
 
   function startMusic() {
     scene.classList.add("open");      // iris opens, ducks start with the music
     if (snd.currentTime > 0.05) snd.currentTime = 0;
-    silence(false);
+    snd.muted = false;
     snd.play().then(() => { raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.hidden = false; });
   }
@@ -224,7 +201,11 @@
     snd.play().then(() => { soundBtn.hidden = true; raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.textContent = "Sound unavailable"; });
   });
-  snd.addEventListener("ended", () => { cancelAnimationFrame(raf); startBtn.hidden = false; });
+  snd.addEventListener("ended", () => {
+    cancelAnimationFrame(raf);
+    opening.classList.add("show");   // "YOU DID IT!" appears on black and stays
+    startBtn.hidden = false;         // calm Tap to play sits below it
+  });
   snd.addEventListener("error", () => { soundBtn.hidden = false; });
 
   // ---- load choreography + cast ----
