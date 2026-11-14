@@ -33,8 +33,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 @keyframes bunny-in { to { opacity: 1; transform: none; } }
 
 .headgrp { transform-origin: 43% 61%; }
-#finale.f-bunny .headgrp { animation: sway 2.4s ease-in-out 0.6s infinite alternate; }
-@keyframes sway { from { transform: rotate(-1.4deg); } to { transform: rotate(1.4deg) translateY(0.4%); } }
+/* head is held still for now; to re-enable the nod: #finale.f-bunny .headgrp { animation: sway ... } */
 
 #fstage .wink { opacity: 0; }
 #finale.f-wink .wink { opacity: 1; }
@@ -76,7 +75,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 @media (prefers-reduced-motion: reduce) {
   .mosaic .cell { transition: none; transform: none; }
   #finale.show .circles, #finale.f-bunny .bunnygrp { animation: none; opacity: 1; transform: none; }
-  #finale.f-bunny .headgrp, #finale.f-wink .duck { animation: none; }
+  #finale.f-wink .duck { animation: none; }
   #finale.f-text .lettering, #finale.f-line .line { animation: none; clip-path: none; }
   .mosaic.half-l, .mosaic.half-r { transition: none; }
 }
