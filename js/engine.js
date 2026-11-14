@@ -202,7 +202,9 @@
     ensureAudio(); setupGraph();
     silence(true);
     snd.currentTime = 0;
-    snd.play().catch(() => {});
+    // Unlock inside the tap, then park at 0: nothing is heard (gain is 0) and the
+    // start of the track is already buffered, so the real start has no seek stutter.
+    snd.play().then(() => { snd.pause(); snd.currentTime = 0; }).catch(() => {});
     opening.classList.add("show");
     clearTimeout(openTimer);
     openTimer = setTimeout(startMusic, OPEN_MS);
@@ -210,7 +212,7 @@
 
   function startMusic() {
     scene.classList.add("open");      // iris opens, ducks start with the music
-    snd.currentTime = 0;
+    if (snd.currentTime > 0.05) snd.currentTime = 0;
     silence(false);
     snd.play().then(() => { raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.hidden = false; });
