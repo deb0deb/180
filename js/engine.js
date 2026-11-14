@@ -117,6 +117,8 @@
         if (st.fullAt !== null) st.pending += e.count; else reveal(e.count, t);
       } else if (e.action === "nextMosaic") {
         if (st.filled > 0 && st.fullAt === null) st.fullAt = t;
+      } else if (e.action === "clear") {
+        st.pending = 0; newMosaic();      // all black just before the split
       } else if (e.action === "finale") {
         doFinale();
       }

@@ -20,6 +20,7 @@ rng = random.Random(180)
 COUNT_SCALE = 0.55       # multiplies the detected hit strength -> ducks
 MAX_COUNT = 4            # largest single burst
 LETTER_LEAD = 0.4        # lettering + underline appear this much before the spoken-line estimate
+BLACK_LEAD = 0.5         # screen goes fully black this long before the finale split; no reveals in that gap
 SPOKEN_ESTIMATE = 21.0   # estimate; refine when the bunny-duck finale is built
 IRIS_START = 23.05       # circle closes to black, audio ends at ~23.86
 
@@ -44,6 +45,12 @@ for e in sorted(d["events"], key=lambda x: x["time"]):
         events.append({"time": e["time"], "action": "reveal", "count": c})
     elif e["action"] == "finale":
         events.append({"time": e["time"], "action": "finale"})
+
+# black gap before the split: drop late reveals, clear the mosaic
+cut = round(d["finale_time"] - BLACK_LEAD, 2)
+events = [e for e in events if not (e["action"] in ("reveal", "nextMosaic") and e["time"] >= cut)]
+events.append({"time": cut, "action": "clear"})
+events.sort(key=lambda e: e["time"])
 
 out = {
     "duration": d["duration"],
