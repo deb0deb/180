@@ -20,7 +20,7 @@ rng = random.Random(180)
 COUNT_SCALE = 0.55       # multiplies the detected hit strength -> ducks
 MAX_COUNT = 4            # largest single burst
 LETTER_LEAD = 0.4        # lettering + underline appear this much before the spoken-line estimate
-BLACK_LEAD = 0.22        # screen goes fully black this long before the finale split; no reveals in that gap
+BLACK_LEAD = 0.12        # screen goes fully black this long before the finale split; no reveals in that gap
 SPOKEN_ESTIMATE = 21.0   # estimate; refine when the bunny-duck finale is built
 IRIS_START = 23.05       # circle closes to black, audio ends at ~23.86
 
