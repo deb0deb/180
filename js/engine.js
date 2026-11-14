@@ -64,6 +64,23 @@
     if (st.filled >= CELLS && st.fullAt === null) st.fullAt = t;
   }
 
+  // Little sparkle "twink" for the wink, synthesized (no audio file needed).
+  let ac = null;
+  function twink() {
+    try {
+      if (!ac) return;
+      const t = ac.currentTime;
+      [[1976, 0], [2637, 0.09]].forEach(([f, d]) => {
+        const o = ac.createOscillator(), v = ac.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        v.gain.setValueAtTime(0.0001, t + d);
+        v.gain.exponentialRampToValueAtTime(0.16, t + d + 0.01);
+        v.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.45);
+        o.connect(v).connect(ac.destination); o.start(t + d); o.stop(t + d + 0.5);
+      });
+    } catch (e) { /* sound is a bonus; never break the animation */ }
+  }
+
   function doFinale() {
     st.finaleDone = true;
     const clone = mosaic.cloneNode(true);
@@ -76,7 +93,7 @@
     const q = cfg.cues, add = (c) => () => finale.classList.add(c), rm = (c) => () => finale.classList.remove(c);
     st.cues = [
       { t: q.bunny, fn: add("f-bunny") }, { t: q.lettering, fn: add("f-text") },
-      { t: q.line, fn: add("f-line") }, { t: q.wink, fn: add("f-wink") }, { t: q.winkEnd, fn: rm("f-wink") },
+      { t: q.line, fn: add("f-line") }, { t: q.wink, fn: () => { finale.classList.add("f-wink"); twink(); } }, { t: q.winkEnd, fn: rm("f-wink") },
     ].sort((a, b) => a.t - b.t);
     st.cueI = 0;
     void mosaic.offsetWidth; // flush so the slide transition runs
@@ -127,6 +144,10 @@
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
     // Opening message on black, silent. Unlock audio inside this tap so the
     // delayed play() below is allowed by mobile browsers.
+    try {   // create/unlock the synth context inside the tap
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+    } catch (e) { ac = null; }
     snd.muted = true;
     snd.play().then(() => { snd.pause(); snd.currentTime = 0; snd.muted = false; })
               .catch(() => { snd.muted = false; });
