@@ -46,9 +46,12 @@ for e in sorted(d["events"], key=lambda x: x["time"]):
     elif e["action"] == "finale":
         events.append({"time": e["time"], "action": "finale"})
 
-# black gap before the split: drop late reveals, clear the mosaic
+# end of the mosaic: lock the last mosaic (no auto-clear / carry-over), stop reveals
+# after the completing burst, hold it, then clear to black just before the split
 cut = round(d["finale_time"] - BLACK_LEAD, 2)
-events = [e for e in events if not (e["action"] in ("reveal", "nextMosaic") and e["time"] >= cut)]
+last_reveal = round(d["finale_time"] - 0.33, 2)
+events = [e for e in events if not (e["action"] in ("reveal", "nextMosaic") and e["time"] > last_reveal)]
+events.append({"time": round(d["finale_time"] - 0.5, 2), "action": "lock"})
 events.append({"time": cut, "action": "clear"})
 events.sort(key=lambda e: e["time"])
 

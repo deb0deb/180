@@ -116,13 +116,15 @@
         if (st.fullAt !== null) st.pending += e.count; else reveal(e.count, t);
       } else if (e.action === "nextMosaic") {
         if (st.filled > 0 && st.fullAt === null) st.fullAt = t;
+      } else if (e.action === "lock") {
+        st.locked = true;                 // final mosaic: no auto-clear until "clear"
       } else if (e.action === "clear") {
         st.pending = 0; newMosaic();      // all black just before the split
       } else if (e.action === "finale") {
         doFinale();
       }
     }
-    if (!st.finaleDone && st.fullAt !== null && t - st.fullAt >= HOLD) {
+    if (!st.finaleDone && !st.locked && st.fullAt !== null && t - st.fullAt >= HOLD) {
       const carry = st.pending; st.pending = 0;
       newMosaic();
       if (carry > 0) reveal(carry, t);
@@ -175,7 +177,7 @@
     void scene.offsetWidth;
     cells.forEach((c) => c.classList.remove("on"));
     st = { i: 0, mosaicIdx: 0, order: [], filled: 0, fullAt: null, pending: 0,
-           finaleDone: false, cues: [], cueI: 0, iris: false, clone: null, seeking: false };
+           finaleDone: false, cues: [], cueI: 0, iris: false, clone: null, seeking: false, locked: false };
     newMosaic();
   }
 
