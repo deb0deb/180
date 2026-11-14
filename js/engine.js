@@ -70,15 +70,22 @@
     try {
       if (!ac) return;
       const t = ac.currentTime;
-      [[1976, 0], [2637, 0.09]].forEach(([f, d]) => {
+      [[1976, 0], [2637, 0.09], [3136, 0.18]].forEach(([f, d]) => {
         const o = ac.createOscillator(), v = ac.createGain();
         o.type = "sine"; o.frequency.value = f;
         v.gain.setValueAtTime(0.0001, t + d);
-        v.gain.exponentialRampToValueAtTime(0.16, t + d + 0.01);
-        v.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.45);
-        o.connect(v).connect(ac.destination); o.start(t + d); o.stop(t + d + 0.5);
+        v.gain.exponentialRampToValueAtTime(0.5, t + d + 0.01);
+        v.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.5);
+        o.connect(v).connect(ac.destination); o.start(t + d); o.stop(t + d + 0.6);
       });
     } catch (e) { /* sound is a bonus; never break the animation */ }
+  }
+
+  function ensureAudio() {   // call from inside a tap so the browser allows it
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+    } catch (e) { ac = null; }
   }
 
   function doFinale() {
@@ -93,7 +100,7 @@
     const q = cfg.cues, add = (c) => () => finale.classList.add(c), rm = (c) => () => finale.classList.remove(c);
     st.cues = [
       { t: q.bunny, fn: add("f-bunny") }, { t: q.lettering, fn: add("f-text") },
-      { t: q.line, fn: add("f-line") }, { t: q.wink, fn: () => { finale.classList.add("f-wink"); twink(); } }, { t: q.winkEnd, fn: rm("f-wink") },
+      { t: q.line, fn: add("f-line") }, { t: q.wink, fn: () => { finale.classList.add("f-wink"); if (!st.seeking) twink(); } }, { t: q.winkEnd, fn: rm("f-wink") },
     ].sort((a, b) => a.t - b.t);
     st.cueI = 0;
     void mosaic.offsetWidth; // flush so the slide transition runs
@@ -101,8 +108,7 @@
   }
 
   // ---- master loop ----
-  function tick() {
-    const t = snd.currentTime;
+  function step(t) {
     const ev = cfg.events;
     while (st.i < ev.length && ev[st.i].time <= t + LEAD) {
       const e = ev[st.i++];
@@ -122,7 +128,55 @@
     }
     while (st.finaleDone && st.cueI < st.cues.length && st.cues[st.cueI].t <= t) st.cues[st.cueI++].fn();
     if (!st.iris && t >= cfg.iris_start) { st.iris = true; scene.classList.add("iris"); }
+  }
+
+  function tick() {
+    const t = snd.currentTime;
+    step(t);
+    if (dbg) dbg.update(t);
     if (!snd.ended) raf = requestAnimationFrame(tick);
+  }
+
+  // Jump anywhere: rebuild state by fast-forwarding the choreography to t.
+  function seek(target) {
+    ensureAudio();
+    cancelAnimationFrame(raf);
+    resetVisuals();
+    startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
+    scene.classList.add("open");
+    scene.style.animationDuration = "0s";
+    st.seeking = true;
+    for (let tt = 0; tt <= target; tt += 0.03) step(tt);
+    st.seeking = false;
+    snd.muted = false;
+    snd.currentTime = target;
+    snd.play().then(() => { raf = requestAnimationFrame(tick); }).catch(() => { soundBtn.hidden = false; });
+  }
+
+  // ?debug adds a scrub bar, jump buttons and a twink test.
+  let dbg = null;
+  function buildDebug() {
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(0,0,0,.78);color:#fff;" +
+      "font:13px system-ui;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center";
+    const lab = document.createElement("span"); lab.textContent = "0.00";
+    const rng = document.createElement("input");
+    rng.type = "range"; rng.min = 0; rng.max = cfg.duration; rng.step = 0.05; rng.value = 0; rng.style.flex = "1 1 100%";
+    let dragging = false;
+    rng.addEventListener("pointerdown", () => { dragging = true; });
+    rng.addEventListener("pointerup", () => { dragging = false; });
+    rng.addEventListener("input", () => seek(parseFloat(rng.value)));
+    box.append(rng, lab);
+    const btn = (txt, fn) => { const b = document.createElement("button"); b.textContent = txt; b.onclick = fn;
+      b.style.cssText = "padding:4px 8px"; box.appendChild(b); };
+    btn("-2s", () => seek(Math.max(0, snd.currentTime - 2)));
+    btn("+2s", () => seek(Math.min(cfg.duration - 0.1, snd.currentTime + 2)));
+    btn("Finale", () => seek(cfg.finale_time - 0.5));
+    btn("Wink", () => seek(cfg.cues.wink - 1.5));
+    btn("Pause/Play", () => { if (snd.paused) snd.play(); else snd.pause(); });
+    btn("Test twink", () => { ensureAudio(); twink(); });
+    document.body.appendChild(box);
+    dbg = { update(t) { lab.textContent = t.toFixed(2) + "s"; if (!dragging) rng.value = t; } };
   }
 
   function resetVisuals() {
@@ -131,11 +185,11 @@
     opening.className = "";
     mosaic.className = "mosaic";
     if (st && st.clone) st.clone.remove();
-    finale.className = ""; scene.className = "";
+    finale.className = ""; scene.className = ""; scene.style.animationDuration = "";
     void scene.offsetWidth;
     cells.forEach((c) => c.classList.remove("on"));
     st = { i: 0, mosaicIdx: 0, order: [], filled: 0, fullAt: null, pending: 0,
-           finaleDone: false, cues: [], cueI: 0, iris: false, clone: null };
+           finaleDone: false, cues: [], cueI: 0, iris: false, clone: null, seeking: false };
     newMosaic();
   }
 
@@ -144,10 +198,7 @@
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
     // Opening message on black, silent. Unlock audio inside this tap so the
     // delayed play() below is allowed by mobile browsers.
-    try {   // create/unlock the synth context inside the tap
-      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
-      if (ac.state === "suspended") ac.resume();
-    } catch (e) { ac = null; }
+    ensureAudio();
     snd.muted = true;
     snd.play().then(() => { snd.pause(); snd.currentTime = 0; snd.muted = false; })
               .catch(() => { snd.muted = false; });
@@ -185,5 +236,6 @@
       .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
     startBtn.disabled = false;
+    if (/[?&]debug/.test(location.search)) buildDebug();
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });
 })();
