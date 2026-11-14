@@ -8,6 +8,7 @@
   const opening = $("opening"), snd = $("snd"), startBtn = $("start"), soundBtn = $("sound"), replayBtn = $("replay");
 
   const CELLS = 12;          // 3 x 4
+  const OPEN_MS = 2500;      // "YOU DID IT!" on black before the ducks
   const HOLD = 0.20;         // seconds a full mosaic stays up before clearing
   const LEAD = 0.04;         // reveal this many seconds ahead of the beat (feels snappier)
   const THUMBS = "assets/duck-thumbnails/";
@@ -147,7 +148,7 @@
     st.seeking = true;
     for (let tt = 0; tt <= target; tt += 0.03) step(tt);
     st.seeking = false;
-    snd.muted = false;
+    silence(false);
     snd.currentTime = target;
     snd.play().then(() => { raf = requestAnimationFrame(tick); }).catch(() => { soundBtn.hidden = false; });
   }
@@ -177,19 +178,38 @@
     newMosaic();
   }
 
-  // The tap itself starts the iris and the music, so the browser always allows
-  // the sound (no silent "unlock" trick that can leak audio on phones).
+  // Tap -> "YOU DID IT!" on black (~2.5 s) -> iris opens, music + ducks start.
+  // The music is started inside the tap (always allowed) but kept silent through
+  // a gain node until the iris opens, then restarted from 0 - no audible blip.
+  let srcNode = null, gainNode = null;
+  function setupGraph() {
+    if (!ac || srcNode) return;
+    try {
+      srcNode = ac.createMediaElementSource(snd);
+      gainNode = ac.createGain();
+      srcNode.connect(gainNode).connect(ac.destination);
+    } catch (e) { srcNode = gainNode = null; }
+  }
+  function silence(on) {
+    if (gainNode) gainNode.gain.value = on ? 0 : 1; else snd.muted = on;
+  }
+
   function run() {
     resetVisuals();
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
-    ensureAudio();
-    startMusic();
+    ensureAudio(); setupGraph();
+    silence(true);
+    snd.currentTime = 0;
+    snd.play().catch(() => {});
+    opening.classList.add("show");
+    clearTimeout(openTimer);
+    openTimer = setTimeout(startMusic, OPEN_MS);
   }
 
   function startMusic() {
     scene.classList.add("open");      // iris opens, ducks start with the music
     snd.currentTime = 0;
-    snd.muted = false;
+    silence(false);
     snd.play().then(() => { raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.hidden = false; });
   }
@@ -200,7 +220,7 @@
     snd.play().then(() => { soundBtn.hidden = true; raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.textContent = "Sound unavailable"; });
   });
-  snd.addEventListener("ended", () => { cancelAnimationFrame(raf); replayBtn.hidden = false; });
+  snd.addEventListener("ended", () => { cancelAnimationFrame(raf); startBtn.hidden = false; });
   snd.addEventListener("error", () => { soundBtn.hidden = false; });
 
   // ---- load choreography + cast ----
@@ -214,7 +234,6 @@
     ["01-concentric-rings", "02-body", "03-head", "04-wink", "05-duck-on-hand", "06-lettering", "07-underline"]
       .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
-    // (the "YOU DID IT!" layer is kept in the page but not shown for now)
     startBtn.disabled = false;
     initDebug();
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });
