@@ -214,7 +214,7 @@
     ["01-concentric-rings", "02-body", "03-head", "04-wink", "05-duck-on-hand", "06-lettering", "07-underline"]
       .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
-    opening.classList.add("show");   // "YOU DID IT!" waits on black for the tap
+    // (the "YOU DID IT!" layer is kept in the page but not shown for now)
     startBtn.disabled = false;
     initDebug();
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });
