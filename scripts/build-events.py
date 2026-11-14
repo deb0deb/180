@@ -19,6 +19,7 @@ rng = random.Random(180)
 
 COUNT_SCALE = 0.55       # multiplies the detected hit strength -> ducks
 MAX_COUNT = 4            # largest single burst
+LETTER_LEAD = 0.4        # lettering + underline appear this much before the spoken-line estimate
 SPOKEN_ESTIMATE = 21.0   # estimate; refine when the bunny-duck finale is built
 IRIS_START = 23.05       # circle closes to black, audio ends at ~23.86
 
@@ -52,8 +53,8 @@ out = {
     # finale choreography (seconds on the audio clock); tune freely
     "cues": {
         "bunny": round(d["finale_time"] + 0.6, 2),      # bunny + duck pop in
-        "lettering": SPOKEN_ESTIMATE,                   # "That's all Folks!" wipes in
-        "line": round(SPOKEN_ESTIMATE + 0.9, 2),        # red underline sweeps
+        "lettering": round(SPOKEN_ESTIMATE - LETTER_LEAD, 2),  # "That's all Folks!" wipes in
+        "line": round(SPOKEN_ESTIMATE - LETTER_LEAD + 0.9, 2),  # red underline follows the lettering
         "wink": round(SPOKEN_ESTIMATE + 1.3, 2),        # bunny winks, duck squashes
         "winkEnd": round(SPOKEN_ESTIMATE + 2.0, 2),
     },
