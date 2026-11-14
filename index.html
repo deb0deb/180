@@ -9,8 +9,24 @@
 </head>
 <body>
 <div id="stage">
+  <div id="opening">
+    <img src="assets/finale/you-did-it.png" alt="YOU DID IT!"
+         onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',textContent:'YOU DID IT!'}))">
+  </div>
   <div id="scene">
-    <div id="finale"><img src="finale.png" alt="That's all folks!"></div>
+    <div id="finale"><div id="fstage">
+      <img class="circles" src="assets/finale/01-concentric-rings.png" alt="">
+      <div class="grp bunnygrp">
+        <img src="assets/finale/02-body.png" alt="">
+        <div class="grp headgrp">
+          <img src="assets/finale/03-head.png" alt="">
+          <img class="wink" src="assets/finale/04-wink.png" alt="">
+        </div>
+        <img class="duck" src="assets/finale/05-duck-on-hand.png" alt="">
+      </div>
+      <img class="lettering" src="assets/finale/06-lettering.png" alt="That's all Folks!">
+      <img class="line" src="assets/finale/07-underline.png" alt="">
+    </div></div>
     <div id="mosaic" class="mosaic"></div>
   </div>
   <button id="start" class="btn big">Tap to play</button>

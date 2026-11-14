@@ -2,3 +2,4 @@ scripts/.venv/
 scripts/out/
 __pycache__/
 scripts/crop.local.json
+js/debug.local.js

@@ -2,18 +2,51 @@
 html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
   font-family: system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
 #stage { position: fixed; inset: 0; background: #000; }
-#scene { position: absolute; inset: 0; clip-path: circle(150% at 50% 50%); }
+#scene { position: absolute; inset: 0; background: #000; clip-path: circle(0% at 50% 50%); }
+#scene.open { animation: iris-open 0.8s ease-out forwards; }
 #scene.iris { animation: iris 0.8s ease-in forwards; }
-@keyframes iris { to { clip-path: circle(0% at 50% 50%); } }
+@keyframes iris-open { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(150% at 50% 50%); } }
+@keyframes iris { from { clip-path: circle(150% at 50% 50%); } to { clip-path: circle(0% at 50% 50%); } }
 
-/* finale layer sits under the mosaic */
+/* opening message, on black, underneath the scene until the iris covers it */
+#opening { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(0.85); }
+#opening.show { animation: msg-in 0.9s cubic-bezier(.2,1.3,.4,1) forwards; }
+@keyframes msg-in { to { opacity: 1; transform: scale(1); } }
+@keyframes msg-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(1.04); } }
+#opening img { max-width: 75%; max-height: 30%; }
+#opening .fallback { color: #ffd400; font: 900 clamp(2.6rem, 14vw, 5rem)/1 system-ui, sans-serif; text-align: center;
+  text-shadow: 0 3px 0 #b36b00, 0 0 24px rgba(255,212,0,.35); letter-spacing: .02em; }
+
+/* finale: seven stacked 1122x1402 layers, sits under the mosaic */
 #finale { position: absolute; inset: 0; background: #011a6c; display: flex;
   align-items: center; justify-content: center; opacity: 0; }
-#finale img { max-width: 100%; max-height: 100%; object-fit: contain; }
-#finale.show { animation: finale-in 1.4s ease-out forwards; }
-#finale.pop img { animation: pop 0.35s ease-out; }
-@keyframes finale-in { from { opacity: 0; transform: scale(1.18); } to { opacity: 1; transform: scale(1); } }
-@keyframes pop { 50% { transform: scale(1.04); } }
+#finale.show { opacity: 1; }
+#fstage { position: relative; aspect-ratio: 1122 / 1402;
+  height: min(100dvh, calc(100vw * 1402 / 1122)); }
+#fstage img, #fstage .grp { position: absolute; inset: 0; width: 100%; height: 100%; }
+#fstage .circles { opacity: 0; transform: scale(0.55); }
+#finale.show .circles { animation: circ-in 1s ease-out forwards; }
+@keyframes circ-in { to { opacity: 1; transform: scale(1); } }
+
+.bunnygrp { opacity: 0; transform: translateY(6%) scale(0.75); transform-origin: 50% 70%; }
+#finale.f-bunny .bunnygrp { animation: bunny-in 0.55s cubic-bezier(.2,1.4,.4,1) forwards; }
+@keyframes bunny-in { to { opacity: 1; transform: none; } }
+
+.headgrp { transform-origin: 43% 61%; }
+/* head is held still for now; to re-enable the nod: #finale.f-bunny .headgrp { animation: sway ... } */
+
+#fstage .wink { opacity: 0; }
+#finale.f-wink .wink { opacity: 1; }
+.duck { transform-origin: 71.9% 48.8%; }
+#finale.f-wink .duck { animation: squash 0.4s ease-out; }
+@keyframes squash { 35% { transform: scale(1.09, 0.82); } }
+
+#fstage .lettering { clip-path: inset(0 100% 0 0); }
+#finale.f-text .lettering { animation: wipe 0.9s ease-out forwards; }
+#fstage .line { clip-path: inset(0 100% 0 0); }
+#finale.f-line .line { animation: wipe 0.5s ease-out forwards; }
+@keyframes wipe { to { clip-path: inset(0 0 0 0); } }
 
 /* 3x4 mosaic, centered, whole art visible */
 .mosaic { position: absolute; inset: 0; margin: auto;
@@ -22,7 +55,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
   display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr);
   gap: 2px; background: #000; }
 .mosaic .cell { background: #000; overflow: hidden; opacity: 0; transform: scale(0.82);
-  transition: opacity 0.16s ease-out, transform 0.16s ease-out; }
+  transition: opacity 0.11s ease-out, transform 0.11s ease-out; }
 .mosaic .cell.on { opacity: 1; transform: scale(1); }
 .mosaic .cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -32,16 +65,20 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 .mosaic.half-l.go { transform: translateX(-105vw); }
 .mosaic.half-r.go { transform: translateX(105vw); }
 
-.btn { position: absolute; z-index: 5; color: #fff; background: #1d5fd1; border: 2px solid #fff;
-  border-radius: 999px; font-weight: 700; cursor: pointer; }
-.btn.big { top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 18px 34px; font-size: 1.3rem; }
+/* calm, monochrome buttons */
+.btn { position: absolute; z-index: 5; color: #d4d4d4; background: #2b2b2b; border: 1px solid #6a6a6a;
+  border-radius: 999px; font-weight: 500; letter-spacing: .02em; cursor: pointer; }
+.btn:hover, .btn:active { background: #3a3a3a; }
+.btn.big { bottom: 12%; left: 50%; transform: translateX(-50%); padding: 14px 30px; font-size: 1.05rem; }
 .btn.small { padding: 8px 18px; font-size: 0.9rem; }
-.btn.red { background: #d6392f; top: 16px; right: 16px; }
+.btn.red { top: 16px; right: 16px; }
 #replay { bottom: max(3%, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); }
 [hidden] { display: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .mosaic .cell { transition: none; transform: none; }
-  #finale.show, #finale.pop img { animation: none; opacity: 1; }
+  #finale.show .circles, #finale.f-bunny .bunnygrp { animation: none; opacity: 1; transform: none; }
+  #finale.f-wink .duck { animation: none; }
+  #finale.f-text .lettering, #finale.f-line .line { animation: none; clip-path: none; }
   .mosaic.half-l, .mosaic.half-r { transition: none; }
 }

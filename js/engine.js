@@ -5,14 +5,15 @@
   "use strict";
   const $ = (id) => document.getElementById(id);
   const stage = $("stage"), scene = $("scene"), mosaic = $("mosaic"), finale = $("finale");
-  const snd = $("snd"), startBtn = $("start"), soundBtn = $("sound"), replayBtn = $("replay");
+  const opening = $("opening"), snd = $("snd"), startBtn = $("start"), soundBtn = $("sound"), replayBtn = $("replay");
 
   const CELLS = 12;          // 3 x 4
-  const HOLD = 0.28;         // seconds a full mosaic stays up before clearing
+  const HOLD = 0.20;         // seconds a full mosaic stays up before clearing
+  const LEAD = 0.04;         // reveal this many seconds ahead of the beat (feels snappier)
   const THUMBS = "assets/duck-thumbnails/";
   const SEED = 180;          // fixed: reveal POSITIONS repeat every play, ducks do not
 
-  let manifest = [], cfg = null, deck = [], deckPos = 0, st = null, raf = 0;
+  let manifest = [], cfg = null, deck = [], deckPos = 0, st = null, raf = 0, openTimer = 0;
 
   // ---- helpers ----
   function mulberry32(a) {
@@ -62,6 +63,30 @@
     if (st.filled >= CELLS && st.fullAt === null) st.fullAt = t;
   }
 
+  // Little sparkle "twink" for the wink, synthesized (no audio file needed).
+  let ac = null;
+  function twink() {
+    try {
+      if (!ac) return;
+      const t = ac.currentTime;
+      [[1976, 0], [2637, 0.09], [3136, 0.18]].forEach(([f, d]) => {
+        const o = ac.createOscillator(), v = ac.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        v.gain.setValueAtTime(0.0001, t + d);
+        v.gain.exponentialRampToValueAtTime(0.5, t + d + 0.01);
+        v.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.5);
+        o.connect(v).connect(ac.destination); o.start(t + d); o.stop(t + d + 0.6);
+      });
+    } catch (e) { /* sound is a bonus; never break the animation */ }
+  }
+
+  function ensureAudio() {   // call from inside a tap so the browser allows it
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === "suspended") ac.resume();
+    } catch (e) { ac = null; }
+  }
+
   function doFinale() {
     st.finaleDone = true;
     const clone = mosaic.cloneNode(true);
@@ -71,51 +96,103 @@
     scene.appendChild(clone);
     st.clone = clone;
     finale.classList.add("show");
+    const q = cfg.cues, add = (c) => () => finale.classList.add(c), rm = (c) => () => finale.classList.remove(c);
+    st.cues = [
+      { t: q.bunny, fn: add("f-bunny") }, { t: q.lettering, fn: add("f-text") },
+      { t: q.line, fn: add("f-line") }, { t: q.wink, fn: () => { finale.classList.add("f-wink"); if (!st.seeking) twink(); } }, { t: q.winkEnd, fn: rm("f-wink") },
+    ].sort((a, b) => a.t - b.t);
+    st.cueI = 0;
     void mosaic.offsetWidth; // flush so the slide transition runs
     mosaic.classList.add("go"); clone.classList.add("go");
   }
 
   // ---- master loop ----
-  function tick() {
-    const t = snd.currentTime;
+  function step(t) {
     const ev = cfg.events;
-    while (st.i < ev.length && ev[st.i].time <= t) {
+    while (st.i < ev.length && ev[st.i].time <= t + LEAD) {
       const e = ev[st.i++];
       if (st.finaleDone) continue;
       if (e.action === "reveal") {
         if (st.fullAt !== null) st.pending += e.count; else reveal(e.count, t);
       } else if (e.action === "nextMosaic") {
         if (st.filled > 0 && st.fullAt === null) st.fullAt = t;
+      } else if (e.action === "lock") {
+        st.locked = true;                 // final mosaic: no auto-clear until "clear"
+      } else if (e.action === "clear") {
+        st.pending = 0; newMosaic();      // all black just before the split
       } else if (e.action === "finale") {
         doFinale();
       }
     }
-    if (!st.finaleDone && st.fullAt !== null && t - st.fullAt >= HOLD) {
+    if (!st.finaleDone && !st.locked && st.fullAt !== null && t - st.fullAt >= HOLD) {
       const carry = st.pending; st.pending = 0;
       newMosaic();
       if (carry > 0) reveal(carry, t);
     }
-    if (!st.popped && st.finaleDone && t >= cfg.spoken_time) { st.popped = true; finale.classList.add("pop"); }
+    while (st.finaleDone && st.cueI < st.cues.length && st.cues[st.cueI].t <= t) st.cues[st.cueI++].fn();
     if (!st.iris && t >= cfg.iris_start) { st.iris = true; scene.classList.add("iris"); }
+  }
+
+  function tick() {
+    const t = snd.currentTime;
+    step(t);
+    if (window.duck && window.duck.onTick) window.duck.onTick(t);
     if (!snd.ended) raf = requestAnimationFrame(tick);
+  }
+
+  // Jump anywhere: rebuild state by fast-forwarding the choreography to t.
+  function seek(target) {
+    ensureAudio();
+    cancelAnimationFrame(raf);
+    resetVisuals();
+    startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
+    scene.classList.add("open");
+    scene.style.animationDuration = "0s";
+    st.seeking = true;
+    for (let tt = 0; tt <= target; tt += 0.03) step(tt);
+    st.seeking = false;
+    snd.muted = false;
+    snd.currentTime = target;
+    snd.play().then(() => { raf = requestAnimationFrame(tick); }).catch(() => { soundBtn.hidden = false; });
+  }
+
+  // ?debug loads js/debug.local.js (a local-only file, not in the repo) which adds
+  // a scrub bar. Without that file, ?debug does nothing.
+  let dbg = null;
+  function initDebug() {
+    if (!/[?&]debug/.test(location.search)) return;
+    window.duck = { seek, twink, ensureAudio, cfg, snd, onTick: null };
+    const s = document.createElement("script");
+    s.src = "js/debug.local.js";
+    document.body.appendChild(s);
   }
 
   function resetVisuals() {
     cancelAnimationFrame(raf);
+    clearTimeout(openTimer);
+    opening.className = "";
     mosaic.className = "mosaic";
     if (st && st.clone) st.clone.remove();
-    finale.className = ""; scene.className = "";
+    finale.className = ""; scene.className = ""; scene.style.animationDuration = "";
     void scene.offsetWidth;
     cells.forEach((c) => c.classList.remove("on"));
     st = { i: 0, mosaicIdx: 0, order: [], filled: 0, fullAt: null, pending: 0,
-           finaleDone: false, popped: false, iris: false, clone: null };
+           finaleDone: false, cues: [], cueI: 0, iris: false, clone: null, seeking: false, locked: false };
     newMosaic();
   }
 
+  // Tap -> iris opens, music + ducks start immediately. "YOU DID IT!" waits for the end.
   function run() {
     resetVisuals();
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
-    snd.currentTime = 0;
+    ensureAudio();
+    startMusic();
+  }
+
+  function startMusic() {
+    scene.classList.add("open");      // iris opens, ducks start with the music
+    if (snd.currentTime > 0.05) snd.currentTime = 0;
+    snd.muted = false;
     snd.play().then(() => { raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.hidden = false; });
   }
@@ -126,7 +203,11 @@
     snd.play().then(() => { soundBtn.hidden = true; raf = requestAnimationFrame(tick); })
               .catch(() => { soundBtn.textContent = "Sound unavailable"; });
   });
-  snd.addEventListener("ended", () => { cancelAnimationFrame(raf); replayBtn.hidden = false; });
+  snd.addEventListener("ended", () => {
+    cancelAnimationFrame(raf);
+    opening.classList.add("show");   // "YOU DID IT!" appears on black and stays
+    startBtn.hidden = false;         // calm Tap to play sits below it
+  });
   snd.addEventListener("error", () => { soundBtn.hidden = false; });
 
   // ---- load choreography + cast ----
@@ -137,7 +218,10 @@
   ]).then(([events, files]) => {
     cfg = events; manifest = files;
     manifest.slice(0, 24).forEach((m) => preload(m.file));
+    ["01-concentric-rings", "02-body", "03-head", "04-wink", "05-duck-on-hand", "06-lettering", "07-underline"]
+      .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
     startBtn.disabled = false;
+    initDebug();
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });
 })();
