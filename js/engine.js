@@ -73,6 +73,12 @@
     scene.appendChild(clone);
     st.clone = clone;
     finale.classList.add("show");
+    const q = cfg.cues, add = (c) => () => finale.classList.add(c), rm = (c) => () => finale.classList.remove(c);
+    st.cues = [
+      { t: q.bunny, fn: add("f-bunny") }, { t: q.lettering, fn: add("f-text") },
+      { t: q.line, fn: add("f-line") }, { t: q.wink, fn: add("f-wink") }, { t: q.winkEnd, fn: rm("f-wink") },
+    ].sort((a, b) => a.t - b.t);
+    st.cueI = 0;
     void mosaic.offsetWidth; // flush so the slide transition runs
     mosaic.classList.add("go"); clone.classList.add("go");
   }
@@ -97,7 +103,7 @@
       newMosaic();
       if (carry > 0) reveal(carry, t);
     }
-    if (!st.popped && st.finaleDone && t >= cfg.spoken_time) { st.popped = true; finale.classList.add("pop"); }
+    while (st.finaleDone && st.cueI < st.cues.length && st.cues[st.cueI].t <= t) st.cues[st.cueI++].fn();
     if (!st.iris && t >= cfg.iris_start) { st.iris = true; scene.classList.add("iris"); }
     if (!snd.ended) raf = requestAnimationFrame(tick);
   }
@@ -112,7 +118,7 @@
     void scene.offsetWidth;
     cells.forEach((c) => c.classList.remove("on"));
     st = { i: 0, mosaicIdx: 0, order: [], filled: 0, fullAt: null, pending: 0,
-           finaleDone: false, popped: false, iris: false, clone: null };
+           finaleDone: false, cues: [], cueI: 0, iris: false, clone: null };
     newMosaic();
   }
 
@@ -154,6 +160,8 @@
   ]).then(([events, files]) => {
     cfg = events; manifest = files;
     manifest.slice(0, 24).forEach((m) => preload(m.file));
+    ["01-concentric-rings", "02-body", "03-head", "04-wink", "05-duck-on-hand", "06-lettering", "07-underline"]
+      .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
     startBtn.disabled = false;
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });

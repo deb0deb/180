@@ -17,14 +17,36 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 #opening .fallback { color: #ffd400; font: 900 clamp(2.6rem, 14vw, 5rem)/1 system-ui, sans-serif; text-align: center;
   text-shadow: 0 3px 0 #b36b00, 0 0 24px rgba(255,212,0,.35); letter-spacing: .02em; }
 
-/* finale layer sits under the mosaic */
+/* finale: seven stacked 1122x1402 layers, sits under the mosaic */
 #finale { position: absolute; inset: 0; background: #011a6c; display: flex;
   align-items: center; justify-content: center; opacity: 0; }
-#finale img { max-width: 100%; max-height: 100%; object-fit: contain; }
-#finale.show { animation: finale-in 1.4s ease-out forwards; }
-#finale.pop img { animation: pop 0.35s ease-out; }
-@keyframes finale-in { from { opacity: 0; transform: scale(1.18); } to { opacity: 1; transform: scale(1); } }
-@keyframes pop { 50% { transform: scale(1.04); } }
+#finale.show { opacity: 1; }
+#fstage { position: relative; aspect-ratio: 1122 / 1402;
+  height: min(100dvh, calc(100vw * 1402 / 1122)); }
+#fstage img, #fstage .grp { position: absolute; inset: 0; width: 100%; height: 100%; }
+#fstage .circles { opacity: 0; transform: scale(0.55); }
+#finale.show .circles { animation: circ-in 1s ease-out forwards; }
+@keyframes circ-in { to { opacity: 1; transform: scale(1); } }
+
+.bunnygrp { opacity: 0; transform: translateY(6%) scale(0.75); transform-origin: 50% 70%; }
+#finale.f-bunny .bunnygrp { animation: bunny-in 0.55s cubic-bezier(.2,1.4,.4,1) forwards; }
+@keyframes bunny-in { to { opacity: 1; transform: none; } }
+
+.headgrp { transform-origin: 43% 61%; }
+#finale.f-bunny .headgrp { animation: sway 2.4s ease-in-out 0.6s infinite alternate; }
+@keyframes sway { from { transform: rotate(-1.4deg); } to { transform: rotate(1.4deg) translateY(0.4%); } }
+
+#fstage .wink { opacity: 0; }
+#finale.f-wink .wink { opacity: 1; }
+.duck { transform-origin: 71.9% 48.8%; }
+#finale.f-wink .duck { animation: squash 0.32s ease-out; }
+@keyframes squash { 40% { transform: scale(1.05, 0.88); } }
+
+#fstage .lettering { clip-path: inset(0 100% 0 0); }
+#finale.f-text .lettering { animation: wipe 0.9s ease-out forwards; }
+#fstage .line { clip-path: inset(0 100% 0 0); }
+#finale.f-line .line { animation: wipe 0.5s ease-out forwards; }
+@keyframes wipe { to { clip-path: inset(0 0 0 0); } }
 
 /* 3x4 mosaic, centered, whole art visible */
 .mosaic { position: absolute; inset: 0; margin: auto;
@@ -53,6 +75,8 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 
 @media (prefers-reduced-motion: reduce) {
   .mosaic .cell { transition: none; transform: none; }
-  #finale.show, #finale.pop img { animation: none; opacity: 1; }
+  #finale.show .circles, #finale.f-bunny .bunnygrp { animation: none; opacity: 1; transform: none; }
+  #finale.f-bunny .headgrp, #finale.f-wink .duck { animation: none; }
+  #finale.f-text .lettering, #finale.f-line .line { animation: none; clip-path: none; }
   .mosaic.half-l, .mosaic.half-r { transition: none; }
 }
