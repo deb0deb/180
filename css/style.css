@@ -66,7 +66,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
 
 .btn { position: absolute; z-index: 5; color: #fff; background: #1d5fd1; border: 2px solid #fff;
   border-radius: 999px; font-weight: 700; cursor: pointer; }
-.btn.big { top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 18px 34px; font-size: 1.3rem; }
+.btn.big { bottom: 20%; left: 50%; transform: translateX(-50%); padding: 16px 32px; font-size: 1.2rem; }
 .btn.small { padding: 8px 18px; font-size: 0.9rem; }
 .btn.red { background: #d6392f; top: 16px; right: 16px; }
 #replay { bottom: max(3%, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); }

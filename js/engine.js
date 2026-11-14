@@ -10,7 +10,6 @@
   const CELLS = 12;          // 3 x 4
   const HOLD = 0.20;         // seconds a full mosaic stays up before clearing
   const LEAD = 0.04;         // reveal this many seconds ahead of the beat (feels snappier)
-  const OPEN_MS = 2400;      // opening message time before music + iris
   const THUMBS = "assets/duck-thumbnails/";
   const SEED = 180;          // fixed: reveal POSITIONS repeat every play, ducks do not
 
@@ -178,18 +177,13 @@
     newMosaic();
   }
 
+  // The tap itself starts the iris and the music, so the browser always allows
+  // the sound (no silent "unlock" trick that can leak audio on phones).
   function run() {
     resetVisuals();
     startBtn.hidden = true; replayBtn.hidden = true; soundBtn.hidden = true;
-    // Opening message on black, silent. Unlock audio inside this tap so the
-    // delayed play() below is allowed by mobile browsers.
     ensureAudio();
-    snd.muted = true;
-    snd.play().then(() => { snd.pause(); snd.currentTime = 0; snd.muted = false; })
-              .catch(() => { snd.muted = false; });
-    opening.classList.add("show");
-    clearTimeout(openTimer);
-    openTimer = setTimeout(startMusic, OPEN_MS);
+    startMusic();
   }
 
   function startMusic() {
@@ -220,6 +214,7 @@
     ["01-concentric-rings", "02-body", "03-head", "04-wink", "05-duck-on-hand", "06-lettering", "07-underline"]
       .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
     resetVisuals();
+    opening.classList.add("show");   // "YOU DID IT!" waits on black for the tap
     startBtn.disabled = false;
     initDebug();
   }).catch((err) => { startBtn.textContent = "Could not load"; console.error(err); });
