@@ -3,6 +3,8 @@
  "finale_time": 16.28,
  "spoken_time": 21.0,
  "iris_start": 23.05,
+ "hero": "D035_birthday-cake.webp",
+ "hero_cell": 4,
  "cues": {
   "bunny": 16.88,
   "lettering": 20.6,

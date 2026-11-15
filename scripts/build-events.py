@@ -21,6 +21,8 @@ COUNT_SCALE = 0.55       # multiplies the detected hit strength -> ducks
 MAX_COUNT = 4            # largest single burst
 LETTER_LEAD = 0.4        # lettering + underline appear this much before the spoken-line estimate
 BLACK_LEAD = 0.12        # screen goes fully black this long before the finale split; no reveals in that gap
+HERO_FILE = "D035_birthday-cake.webp"   # the 80th-birthday card: always the very first duck
+HERO_CELL = 4            # grid position 0-11 (3 across x 4 down); 4 = middle column, second row; 7 = middle column, third row
 SPOKEN_ESTIMATE = 21.0   # estimate; refine when the bunny-duck finale is built
 IRIS_START = 23.05       # circle closes to black, audio ends at ~23.86
 
@@ -60,6 +62,8 @@ out = {
     "finale_time": d["finale_time"],
     "spoken_time": SPOKEN_ESTIMATE,
     "iris_start": IRIS_START,
+    "hero": HERO_FILE,
+    "hero_cell": HERO_CELL,
     # finale choreography (seconds on the audio clock); tune freely
     "cues": {
         "bunny": round(d["finale_time"] + 0.6, 2),      # bunny + duck pop in

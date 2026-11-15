@@ -13,7 +13,7 @@
   const THUMBS = "assets/duck-thumbnails/";
   const SEED = 180;          // fixed: reveal POSITIONS repeat every play, ducks do not
 
-  let manifest = [], cfg = null, deck = [], deckPos = 0, st = null, raf = 0, openTimer = 0;
+  let manifest = [], hero = null, cfg = null, deck = [], deckPos = 0, st = null, raf = 0, openTimer = 0;
 
   // ---- helpers ----
   function mulberry32(a) {
@@ -36,7 +36,9 @@
 
   // ---- duck deck: no repeats until the inventory is used up, then reshuffle ----
   function takeDuck() {
-    if (deckPos >= deck.length) { deck = shuffle(manifest.slice(), Math.random); deckPos = 0; }
+    if (deckPos >= deck.length) {
+      deck = shuffle(manifest.filter((m) => !hero || m.file !== hero.file), Math.random); deckPos = 0;
+    }
     const d = deck[deckPos++];
     for (let k = 0; k < 12 && deckPos + k < deck.length; k++) preload(deck[deckPos + k].file);
     return d;
@@ -47,6 +49,10 @@
     st.mosaicIdx++;
     st.order = shuffle([...Array(CELLS).keys()], mulberry32(SEED + st.mosaicIdx));
     st.filled = 0; st.fullAt = null;
+    if (st.mosaicIdx === 1 && hero) {       // the hero card opens the show, in its own spot
+      const k = st.order.indexOf(cfg.hero_cell);
+      if (k > 0) [st.order[0], st.order[k]] = [st.order[k], st.order[0]];
+    }
     cells.forEach((c) => c.classList.remove("on"));
   }
 
@@ -55,8 +61,9 @@
   function reveal(count, t) {
     const n = Math.min(count, CELLS - st.filled);
     for (let k = 0; k < n; k++) {
+      const first = st.mosaicIdx === 1 && st.filled === 0;
       const cell = cells[st.order[st.filled++]];
-      cell.firstChild.src = THUMBS + takeDuck().file;
+      cell.firstChild.src = THUMBS + (first && hero ? hero : takeDuck()).file;
       cell.classList.add("on");
     }
     if (count > n) st.pending += count - n;
@@ -217,6 +224,7 @@
     fetch(THUMBS + "manifest.json").then((r) => r.json()),
   ]).then(([events, files]) => {
     cfg = events; manifest = files;
+    hero = manifest.find((m) => m.file === cfg.hero) || null;
     manifest.slice(0, 24).forEach((m) => preload(m.file));
     ["01-concentric-rings", "02-body", "03-head", "04-wink", "05-duck-on-hand", "06-lettering", "07-underline"]
       .forEach((n) => { new Image().src = "assets/finale/" + n + ".png"; });
